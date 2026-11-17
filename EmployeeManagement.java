@@ -19,7 +19,9 @@ public class EmployeeManagement {
             System.out.println("1. Add employee");
             System.out.println("2. Display all employees");
             System.out.println("3. Search employee by ID");
-            System.out.println("4. Exit");
+            System.out.println("4. Update employee details");
+            System.out.println("5. Delete employee");
+            System.out.println("6. Exit");
             System.out.print("Choose an option: ");
 
             switch (scanner.nextLine().trim()) {
@@ -33,11 +35,17 @@ public class EmployeeManagement {
                     searchEmployee();
                     break;
                 case "4":
+                    updateEmployee();
+                    break;
+                case "5":
+                    deleteEmployee();
+                    break;
+                case "6":
                     running = false;
                     System.out.println("Goodbye!");
                     break;
                 default:
-                    System.out.println("Invalid option. Please choose 1–4.");
+                    System.out.println("Invalid option. Please choose 1–6.");
             }
         }
 
@@ -64,6 +72,48 @@ public class EmployeeManagement {
 
         employees.add(new Employee(id, name, department, salary));
         System.out.println("Employee added successfully.");
+    }
+
+    private static void updateEmployee() {
+        System.out.print("Enter the ID of the employee to update: ");
+        String id = scanner.nextLine().trim();
+        Employee employee = findEmployeeById(id);
+
+        if (employee == null) {
+            System.out.println("No employee found with ID " + id + ".");
+            return;
+        }
+
+        System.out.println("Current details: " + employee);
+        System.out.print("New name: ");
+        String name = scanner.nextLine().trim();
+        System.out.print("New department: ");
+        String department = scanner.nextLine().trim();
+        double salary = readSalary();
+
+        employee.updateDetails(name, department, salary);
+        System.out.println("Employee details updated successfully.");
+    }
+
+    private static void deleteEmployee() {
+        System.out.print("Enter the ID of the employee to delete: ");
+        String id = scanner.nextLine().trim();
+        Employee employee = findEmployeeById(id);
+
+        if (employee == null) {
+            System.out.println("No employee found with ID " + id + ".");
+            return;
+        }
+
+        System.out.println("Employee to delete: " + employee);
+        System.out.print("Are you sure you want to delete this employee? (y/n): ");
+        String confirmation = scanner.nextLine().trim();
+        if (confirmation.equalsIgnoreCase("y")) {
+            employees.remove(employee);
+            System.out.println("Employee deleted successfully.");
+        } else {
+            System.out.println("Deletion cancelled.");
+        }
     }
 
     private static double readSalary() {
@@ -117,9 +167,9 @@ public class EmployeeManagement {
 
     private static class Employee {
         private final String id;
-        private final String name;
-        private final String department;
-        private final double salary;
+        private String name;
+        private String department;
+        private double salary;
 
         private Employee(String id, String name, String department, double salary) {
             this.id = id;
@@ -130,6 +180,12 @@ public class EmployeeManagement {
 
         private String getId() {
             return id;
+        }
+
+        private void updateDetails(String name, String department, double salary) {
+            this.name = name;
+            this.department = department;
+            this.salary = salary;
         }
 
         @Override
